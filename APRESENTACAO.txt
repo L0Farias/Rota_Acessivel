@@ -1,0 +1,94 @@
+====================================================
+  ROTA ACESSÍVEL — ROTEIRO DE APRESENTAÇÃO (5 min)
+====================================================
+
+IDEIA DO APP (30s)
+------------------
+App cívico para denunciar barreiras de acessibilidade
+nas ruas: rampas quebradas, calçadas danificadas,
+falta de piso tátil, vagas irregulares.
+Cada denúncia vira um ponto no mapa colaborativo
+do bairro.
+
+
+1. LOGIN COM BIOMETRIA (30s)
+-----------------------------
+- Abrir o app mostra a tela de login
+- Toca em "Entrar com biometria"
+- Usa digital / Face ID para autenticar
+→ Recurso nativo: expo-local-authentication
+
+
+2. REPORTAR UMA BARREIRA (1 min)
+---------------------------------
+- Vai na aba REPORTAR (botão central da tab bar)
+- Aponta a câmera para qualquer coisa na sala
+- Toca em "Fotografar barreira"
+- No formulário:
+    → Escolhe a categoria (ex: Calçada danificada)
+    → Escolhe a gravidade (Leve / Moderada / Grave)
+    → Opcional: escreve uma descrição
+- Toca em "Enviar denúncia"
+→ Recursos: câmera, SQLite, geolocalização, tema
+
+
+3. LISTA DE DENÚNCIAS (45s)
+-----------------------------
+- Vai na aba DENÚNCIAS
+- Mostra os 3 cards no topo: Total / Pendentes / Resolvidas
+- Mostra o card da barreira com foto, categoria e gravidade
+- Toca em "Marcar como resolvida"
+- Contador de Resolvidas aumenta
+→ Recurso: SQLite (UPDATE)
+
+
+4. MAPA COLABORATIVO (1 min)
+------------------------------
+- Vai na aba MAPA
+- Marcador roxo pulsante mostra sua posição em tempo real
+- HUD na parte de baixo mostra direção e velocidade
+- Anda um pouco — o marcador segue você
+- Toca no botão 🎯 para recentrar
+- Toca no ponto vermelho/amarelo/verde da denúncia
+  → Abre modal com foto, categoria, gravidade e data
+- Toca em "🛰️ Satélite" para ver visão de satélite
+→ Recursos: GPS em tempo real, WebView + Leaflet,
+   OpenStreetMap, satélite Esri (sem chave de API)
+
+
+5. GALERIA (20s)
+-----------------
+- Vai na aba GALERIA
+- Escolhe uma foto já existente no celular
+- Mesmo formulário de categoria/gravidade
+→ Recurso: expo-image-picker
+
+
+6. CONFIGURAÇÕES (30s)
+------------------------
+- Vai em AJUSTES
+- Alterna o tema claro/escuro
+  → Toda a UI muda instantaneamente
+  → Preferência salva no dispositivo
+- Mostra que é um app 100% local (sem servidor)
+→ Recurso: AsyncStorage
+
+
+7. TESTES (15s) — opcional
+----------------------------
+- No terminal:  npm test
+- Mostra os testes passando:
+    ThemedButton, ThemeContext, biometrics, database
+
+
+====================================================
+STACK RÁPIDA (caso perguntem)
+====================================================
+- React Native 0.86 + Expo SDK 57
+- SQLite local (expo-sqlite)
+- AsyncStorage para tema
+- Câmera, galeria, localização, biometria — tudo Expo
+- Mapa: Leaflet + OpenStreetMap + satélite Esri
+  (sem Google Maps, sem chave de API)
+- Tema claro/escuro com Context API
+====================================================

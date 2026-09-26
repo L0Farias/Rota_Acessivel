@@ -1,0 +1,76 @@
+{
+  "expo": {
+    "name": "Rota Acessível",
+    "slug": "rota-acessivel",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.exemplo.rotaacessivel",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Usamos a câmera para fotografar barreiras de acessibilidade que você quer denunciar.",
+        "NSPhotoLibraryUsageDescription": "Usamos a galeria para você escolher uma foto já existente da barreira e para salvar as fotos tiradas no app.",
+        "NSLocationWhenInUseUsageDescription": "Usamos sua localização para marcar exatamente onde está a barreira de acessibilidade no mapa.",
+        "NSFaceIDUsageDescription": "Use o Face ID para entrar no app com segurança."
+      },
+      "config": {
+        "googleMapsApiKey": "SUA_CHAVE_GOOGLE_MAPS_IOS"
+      }
+    },
+    "android": {
+      "package": "com.exemplo.rotaacessivel",
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "USE_BIOMETRIC",
+        "USE_FINGERPRINT"
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "SUA_CHAVE_GOOGLE_MAPS_ANDROID"
+        }
+      }
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Permitir que o Rota Acessível use a câmera."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Permitir que o Rota Acessível acesse suas fotos."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Permitir que o Rota Acessível use sua localização."
+        }
+      ],
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Permitir autenticação por Face ID."
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Permitir que o Rota Acessível salve fotos na galeria.",
+          "savePhotosPermission": "Permitir que o Rota Acessível salve fotos na galeria.",
+          "isAccessMediaLocationEnabled": true
+        }
+      ]
+    ]
+  }
+}
