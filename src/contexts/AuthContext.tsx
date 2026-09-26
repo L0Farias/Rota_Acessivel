@@ -16,41 +16,24 @@ import {
 import { autenticarComBiometria, dispositivoSuportaBiometria } from "@/services/biometrics";
 import { Usuario } from "@/types";
 
-// ---------------------------------------------------------------------------
-// Tipos
-// ---------------------------------------------------------------------------
-
 interface AuthContextData {
-  /** Usuário atualmente logado (null = não autenticado). */
   usuarioAtivo: Usuario | null;
   autenticado: boolean;
   carregando: boolean;
-  /** Registra novo usuário; retorna mensagem de erro ou null em caso de sucesso. */
   cadastrar: (
     nome: string,
     email: string,
     senha: string,
     habilitarBiometria: boolean
   ) => Promise<string | null>;
-  /** Login com e-mail e senha; retorna mensagem de erro ou null em caso de sucesso. */
   entrarComSenha: (email: string, senha: string) => Promise<string | null>;
-  /** Login biométrico; retorna true se bem-sucedido. */
   entrarComBiometria: () => Promise<boolean>;
-  /** Verifica se há algum usuário com biometria cadastrada no banco. */
   temUsuarioComBiometria: () => boolean;
   sair: () => void;
 }
 
-// ---------------------------------------------------------------------------
-// Constantes
-// ---------------------------------------------------------------------------
-
 const CHAVE_ULTIMO_USUARIO = "@rotaAcessivel:ultimoUsuarioId";
 
-// ---------------------------------------------------------------------------
-// Hash simples (djb2) — suficiente para armazenamento local offline.
-// NÃO use em sistemas com conexão a servidores ou dados sensíveis reais.
-// ---------------------------------------------------------------------------
 function hashSenha(senha: string): string {
   let hash = 5381;
   for (let i = 0; i < senha.length; i++) {
@@ -59,18 +42,12 @@ function hashSenha(senha: string): string {
   return (hash >>> 0).toString(16);
 }
 
-// ---------------------------------------------------------------------------
-// Context
-// ---------------------------------------------------------------------------
-
 const AuthContext = createContext<AuthContextData | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [usuarioAtivo, setUsuarioAtivo] = useState<Usuario | null>(null);
   const [carregando, setCarregando] = useState(true);
 
-  // Na inicialização, tenta restaurar sessão via biometria se houver usuário
-  // com biometria habilitada e o dispositivo suportar.
   useEffect(() => {
     async function tentarLoginAutomatico() {
       try {
@@ -88,7 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUsuarioAtivo(usuario);
         }
       } catch {
-        // Falha silenciosa — usuário vai fazer login manual
+        // silencioso
       } finally {
         setCarregando(false);
       }
@@ -96,8 +73,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     tentarLoginAutomatico();
   }, []);
-
-  // ------------------------------------------------------------------
 
   const cadastrar = async (
     nome: string,
@@ -109,13 +84,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!email.trim() || !email.includes("@")) return "Informe um e-mail válido.";
     if (senha.length < 6) return "A senha deve ter pelo menos 6 caracteres.";
 
-    // Verifica se biometria é suportada quando o usuário quer habilitá-la
     if (habilitarBiometria) {
       const suportado = await dispositivoSuportaBiometria();
       if (!suportado) {
         return "Este dispositivo não possui biometria cadastrada. Desmarque a opção e tente novamente.";
       }
-      // Pede confirmação biométrica já no cadastro
       const confirmada = await autenticarComBiometria();
       if (!confirmada) {
         return "Biometria não confirmada. Tente novamente ou desmarque a opção.";
@@ -138,13 +111,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       await AsyncStorage.setItem(CHAVE_ULTIMO_USUARIO, String(id));
       setUsuarioAtivo(novoUsuario);
-      return null; // sucesso
+      return null;
     } catch (e: any) {
       return "Erro ao salvar conta: " + (e?.message ?? "desconhecido");
     }
   };
-
-  // ------------------------------------------------------------------
 
   const entrarComSenha = async (
     email: string,
@@ -160,10 +131,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     await AsyncStorage.setItem(CHAVE_ULTIMO_USUARIO, String(usuario.id));
     setUsuarioAtivo(usuario);
-    return null; // sucesso
+    return null;
   };
-
-  // ------------------------------------------------------------------
 
   const entrarComBiometria = async (): Promise<boolean> => {
     const usuario = buscarUsuarioComBiometria();
@@ -177,21 +146,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return sucesso;
   };
 
-  // ------------------------------------------------------------------
-
   const temUsuarioComBiometria = (): boolean => {
     return buscarUsuarioComBiometria() !== null;
   };
 
-  // ------------------------------------------------------------------
-
   const sair = async () => {
     setUsuarioAtivo(null);
-    // Mantém o id salvo para que o app possa oferecer biometria no próximo
-    // acesso sem precisar digitar e-mail novamente.
   };
-
-  // ------------------------------------------------------------------
 
   const valor = useMemo(
     () => ({

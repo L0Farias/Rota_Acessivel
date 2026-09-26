@@ -6,12 +6,8 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { RootNavigator } from "@/navigation/RootNavigator";
 import { inicializarBanco } from "@/database/database";
 
-// App.tsx é só o "casca": inicializa o banco, monta os Providers (tema e
-// autenticação) e entrega o controle para o RootNavigator.
 export default function App() {
   useEffect(() => {
-    // Garante que as tabelas (barreiras e usuarios) existam antes de qualquer
-    // operação de leitura ou escrita no banco.
     inicializarBanco();
   }, []);
 

@@ -1,9 +1,6 @@
 import * as SQLite from "expo-sqlite";
 import { Barreira, NovaBarreira, StatusBarreira, Usuario, NovoUsuario } from "@/types";
 
-// Banco local: cada denúncia de barreira de acessibilidade fica salva no
-// próprio dispositivo, funcionando mesmo sem internet (o usuário pode
-// registrar a barreira na rua e o app não depende de conexão para isso).
 const db = SQLite.openDatabaseSync("rota-acessivel.db");
 
 export function inicializarBanco(): void {
@@ -33,14 +30,6 @@ export function inicializarBanco(): void {
   `);
 }
 
-// ---------------------------------------------------------------------------
-// Funções de usuários
-// ---------------------------------------------------------------------------
-
-/**
- * Cria um novo usuário no banco.
- * Retorna o id gerado ou lança exceção se o e-mail já existir.
- */
 export function criarUsuario(usuario: NovoUsuario): number {
   const resultado = db.runSync(
     `INSERT INTO usuarios (nome, email, senhaHash, biometriaHabilitada, criadoEm)
@@ -56,10 +45,6 @@ export function criarUsuario(usuario: NovoUsuario): number {
   return resultado.lastInsertRowId;
 }
 
-/**
- * Busca um usuário pelo e-mail (case-insensitive).
- * Retorna null se não encontrar.
- */
 export function buscarUsuarioPorEmail(email: string): Usuario | null {
   return (
     db.getFirstSync<Usuario>(
@@ -69,9 +54,6 @@ export function buscarUsuarioPorEmail(email: string): Usuario | null {
   );
 }
 
-/**
- * Busca um usuário pelo id.
- */
 export function buscarUsuarioPorId(id: number): Usuario | null {
   return (
     db.getFirstSync<Usuario>(
@@ -81,24 +63,13 @@ export function buscarUsuarioPorId(id: number): Usuario | null {
   );
 }
 
-/**
- * Atualiza o campo biometriaHabilitada de um usuário.
- */
-export function atualizarBiometriaUsuario(
-  id: number,
-  habilitada: boolean
-): void {
+export function atualizarBiometriaUsuario(id: number, habilitada: boolean): void {
   db.runSync(
     "UPDATE usuarios SET biometriaHabilitada = ? WHERE id = ?;",
     [habilitada ? 1 : 0, id]
   );
 }
 
-/**
- * Retorna o primeiro usuário com biometria habilitada (para login biométrico).
- * Em um app multi-usuário seria necessário escolher; aqui assumimos um único
- * usuário ativo por dispositivo — padrão comum em apps mobile.
- */
 export function buscarUsuarioComBiometria(): Usuario | null {
   return (
     db.getFirstSync<Usuario>(
@@ -108,9 +79,7 @@ export function buscarUsuarioComBiometria(): Usuario | null {
 }
 
 export function listarBarreiras(): Barreira[] {
-  return db.getAllSync<Barreira>(
-    "SELECT * FROM barreiras ORDER BY id DESC;"
-  );
+  return db.getAllSync<Barreira>("SELECT * FROM barreiras ORDER BY id DESC;");
 }
 
 export function inserirBarreira(barreira: NovaBarreira): void {
@@ -130,10 +99,7 @@ export function inserirBarreira(barreira: NovaBarreira): void {
   );
 }
 
-export function atualizarStatusBarreira(
-  id: number,
-  status: StatusBarreira
-): void {
+export function atualizarStatusBarreira(id: number, status: StatusBarreira): void {
   db.runSync("UPDATE barreiras SET status = ? WHERE id = ?;", [status, id]);
 }
 
